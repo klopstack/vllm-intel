@@ -168,37 +168,135 @@ def _gdn_attention_core_xpu_impl(
         self.conv1d.weight.size(0), self.conv1d.weight.size(2)
     )
 
-    torch.ops._xpu_C.gdn_attention(
-        core_attn_out,
-        z,
-        projected_states_qkvz,
-        projected_states_ba,
-        self.num_k_heads,
-        self.num_v_heads,
-        self.head_k_dim,
-        self.head_v_dim,
-        conv_state=self.kv_cache[0],
-        ssm_state=self.kv_cache[1],
-        conv_weights=conv_weights,
-        conv_bias=self.conv1d.bias,
-        activation=self.activation,
-        A_log=self.A_log,
-        dt_bias=self.dt_bias,
-        num_prefills=num_prefills,  # type: ignore[attr-defined]
-        num_decodes=num_decodes,  # type: ignore[attr-defined]
-        num_spec_decodes=num_spec_decodes,  # type: ignore[attr-defined]
-        has_initial_state=has_initial_state,  # type: ignore[attr-defined]
-        non_spec_query_start_loc=non_spec_query_start_loc,  # type: ignore[attr-defined]
-        non_spec_token_indx=non_spec_token_indx,  # type: ignore[attr-defined]
-        non_spec_state_indices_tensor=non_spec_state_indices_tensor,  # type: ignore[attr-defined]
-        spec_query_start_loc=spec_query_start_loc,  # type: ignore[attr-defined]
-        spec_token_indx=spec_token_indx,  # type: ignore[attr-defined]
-        spec_state_indices_tensor=spec_state_indices_tensor,
-        num_accepted_tokens=num_accepted_tokens,  # type: ignore[attr-defined]
-        num_actual_tokens=num_actual_tokens,  # type: ignore[attr-defined]
-        tp_size=self.tp_size,
-        reorder_input=not self.gqa_interleaved_layout,
-    )
+    def _call_op(
+        out_buf,
+        z_buf,
+        qkvz_buf,
+        ba_buf,
+        *,
+        n_prefills,
+        n_decodes,
+        n_spec,
+        init_state,
+        ns_qsl,
+        ns_tok_indx,
+        ns_state_indx,
+        s_qsl,
+        s_tok_indx,
+        s_state_indx,
+        n_accepted,
+        n_tokens,
+    ):
+        torch.ops._xpu_C.gdn_attention(
+            out_buf,
+            z_buf,
+            qkvz_buf,
+            ba_buf,
+            self.num_k_heads,
+            self.num_v_heads,
+            self.head_k_dim,
+            self.head_v_dim,
+            conv_state=self.kv_cache[0],
+            ssm_state=self.kv_cache[1],
+            conv_weights=conv_weights,
+            conv_bias=self.conv1d.bias,
+            activation=self.activation,
+            A_log=self.A_log,
+            dt_bias=self.dt_bias,
+            num_prefills=n_prefills,
+            num_decodes=n_decodes,
+            num_spec_decodes=n_spec,
+            has_initial_state=init_state,
+            non_spec_query_start_loc=ns_qsl,
+            non_spec_token_indx=ns_tok_indx,
+            non_spec_state_indices_tensor=ns_state_indx,
+            spec_query_start_loc=s_qsl,
+            spec_token_indx=s_tok_indx,
+            spec_state_indices_tensor=s_state_indx,
+            num_accepted_tokens=n_accepted,
+            num_actual_tokens=n_tokens,
+            tp_size=self.tp_size,
+            reorder_input=not self.gqa_interleaved_layout,
+        )
+
+    mixed = num_spec_decodes > 0 and (num_prefills + num_decodes) > 0
+    if not mixed:
+        _call_op(
+            core_attn_out,
+            z,
+            projected_states_qkvz,
+            projected_states_ba,
+            n_prefills=num_prefills,
+            n_decodes=num_decodes,
+            n_spec=num_spec_decodes,
+            init_state=has_initial_state,
+            ns_qsl=non_spec_query_start_loc,
+            ns_tok_indx=non_spec_token_indx,
+            ns_state_indx=non_spec_state_indices_tensor,
+            s_qsl=spec_query_start_loc,
+            s_tok_indx=spec_token_indx,
+            s_state_indx=spec_state_indices_tensor,
+            n_accepted=num_accepted_tokens,
+            n_tokens=num_actual_tokens,
+        )
+        return
+
+    # The compiled XPU gdn_attention op rejects batches mixing spec-decode
+    # and non-spec (prefill+decode) tokens. Mirror the generic
+    # _forward_core: partition the token dimension per population (the
+    # builder's token_indx tensors), run the op once per population on
+    # compacted homogeneous inputs, and scatter results back. State slots
+    # (conv/ssm) are per-sequence and disjoint between the populations.
+    assert spec_token_indx is not None and non_spec_token_indx is not None
+    ns_indx = non_spec_token_indx.to(torch.long)
+    s_indx = spec_token_indx.to(torch.long)
+
+    for indx, kwargs in (
+        (
+            ns_indx,
+            dict(
+                n_prefills=num_prefills,
+                n_decodes=num_decodes,
+                n_spec=0,
+                init_state=has_initial_state,
+                ns_qsl=non_spec_query_start_loc,
+                ns_tok_indx=None,
+                ns_state_indx=non_spec_state_indices_tensor,
+                s_qsl=None,
+                s_tok_indx=None,
+                s_state_indx=None,
+                n_accepted=None,
+                n_tokens=int(ns_indx.numel()),
+            ),
+        ),
+        (
+            s_indx,
+            dict(
+                n_prefills=0,
+                n_decodes=0,
+                n_spec=num_spec_decodes,
+                init_state=None,
+                ns_qsl=None,
+                ns_tok_indx=None,
+                ns_state_indx=None,
+                s_qsl=spec_query_start_loc,
+                # op requires spec_token_indx whenever num_spec_decodes > 0;
+                # inputs are compacted, so identity indices are correct
+                s_tok_indx=torch.arange(
+                    s_indx.numel(), dtype=torch.int32, device=s_indx.device
+                ),
+                s_state_indx=spec_state_indices_tensor,
+                n_accepted=num_accepted_tokens,
+                n_tokens=int(s_indx.numel()),
+            ),
+        ),
+    ):
+        out_pop = core_attn_out.index_select(0, indx).contiguous()
+        z_pop = z.index_select(0, indx).contiguous()
+        qkvz_pop = projected_states_qkvz.index_select(0, indx).contiguous()
+        ba_pop = projected_states_ba.index_select(0, indx).contiguous()
+        _call_op(out_pop, z_pop, qkvz_pop, ba_pop, **kwargs)
+        core_attn_out.index_copy_(0, indx, out_pop)
 
 
 def _gdn_attention_core_xpu_fake(
