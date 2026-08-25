@@ -251,6 +251,39 @@ def _gdn_attention_core_xpu_impl(
     ns_indx = non_spec_token_indx.to(torch.long)
     s_indx = spec_token_indx.to(torch.long)
 
+    import os
+
+    if os.environ.get("VLLM_GDN_SPLIT_DEBUG") == "1":
+        rows = core_attn_out.shape[0]
+        problems = []
+        for name, ix in (("non_spec", ns_indx), ("spec", s_indx)):
+            if ix.numel() == 0:
+                problems.append(f"{name} empty")
+                continue
+            lo, hi = int(ix.min()), int(ix.max())
+            if lo < 0 or hi >= rows:
+                problems.append(f"{name} range [{lo},{hi}] vs rows {rows}")
+        total = ns_indx.numel() + s_indx.numel()
+        if total != num_actual_tokens:
+            problems.append(
+                f"coverage {ns_indx.numel()}+{s_indx.numel()} != "
+                f"actual {num_actual_tokens}"
+            )
+        if problems:
+            import logging
+
+            logging.getLogger(__name__).error(
+                "GDN split violation layer=%s: %s | prefills=%s decodes=%s "
+                "spec=%s rows=%s qkvz=%s",
+                layer_name,
+                "; ".join(problems),
+                num_prefills,
+                num_decodes,
+                num_spec_decodes,
+                rows,
+                tuple(projected_states_qkvz.shape),
+            )
+
     for indx, kwargs in (
         (
             ns_indx,
