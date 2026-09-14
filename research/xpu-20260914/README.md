@@ -22,6 +22,13 @@ Historical artifacts retain the status and authorization statements recorded
 when they were written; this backup supersedes their statements that no push was
 authorized. Human approval remains required for any new PR.
 
+GitHub rejected the historical `xpu-eagle-jit-race-hardening` and
+`xpu-gdn-spec-decode` tips because they used the user's private email. Their
+published copies use the GitHub noreply address, with identical source trees.
+The original local branches remain intact; the local `github-backup/` branches
+hold the published copies. [privacy-normalization.json](privacy-normalization.json)
+records the exact commit mapping.
+
 ## Measured model performance
 
 Native decode tokens/s, excluding prefill; medians over five fixed prompts at
@@ -71,6 +78,12 @@ source provenance, and the independent comparison.
 No GPU benchmarks were repeated for this backup. Failed setup runs, the failed
 strict output comparison, and superseded kernel-harness checks are retained.
 The exact tested source archives distinguish measured code from later formatting.
+
+Backup checks independently passed the TP2 helper's 8 CPU tests, the TP1 branch's
+2 existing Qwen3.5 quantization tests, and scoped pre-commit/type hooks. The TP1
+worker also tried the broader MTP configuration suite: 7 passed and 3 could not
+load the uncached `Qwen/Qwen3.6-35B-A3B` configuration in offline mode. That suite
+did not pass completely; no new model-accuracy validation is claimed.
 
 ## Findings and remaining experiments
 

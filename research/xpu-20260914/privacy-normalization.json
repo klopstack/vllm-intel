@@ -1,0 +1,40 @@
+{
+  "destination": "https://github.com/CySpiegel/vllm-intel.git",
+  "reason": "GitHub GH007 rejected private email addresses on two old branch tips.",
+  "changes": "Copies normalize the user email and matching message trailers; all source trees are identical.",
+  "original_local_branches_preserved": {
+    "xpu-eagle-jit-race-hardening": "4356f0275acf31edbfc560db60e00b3378d3e886",
+    "xpu-gdn-spec-decode": "f5d5c9d41b97ed85fc31d74162535cb589c76c8b"
+  },
+  "remote_heads": {
+    "xpu-eagle-jit-race-hardening": "42515dfbf32978fbc389b5a1cc750b02e959ec44",
+    "xpu-gdn-spec-decode": "954b09b74439ee514ee7f91366fc6ae63ef7c5b0"
+  },
+  "commits": [
+    {
+      "original": "4356f0275acf31edbfc560db60e00b3378d3e886",
+      "public_copy": "42515dfbf32978fbc389b5a1cc750b02e959ec44",
+      "tree": "e6f6070cad883e276099e674997ab68bc7c3e6fa"
+    },
+    {
+      "original": "21f729594cc67efd11405b2b40744b37a4bdd569",
+      "public_copy": "684d34fe146fbb56406224eaf726619b257b6886",
+      "tree": "24303cfe943d50586f04477013024c167075814a"
+    },
+    {
+      "original": "d62d0c283f86cd01605d7803fda9120513010d89",
+      "public_copy": "bbc41787e09e59b7679d463223687859c615a170",
+      "tree": "357f5cbb987189a1ec4105c7b00f2f3d0946bada"
+    },
+    {
+      "original": "cbf122b6a2cfd02470a295f3f72b71d4c5cfc8bd",
+      "public_copy": "8ea68fa06eaca3e580b40f55b818482285f26ac0",
+      "tree": "24303cfe943d50586f04477013024c167075814a"
+    },
+    {
+      "original": "f5d5c9d41b97ed85fc31d74162535cb589c76c8b",
+      "public_copy": "954b09b74439ee514ee7f91366fc6ae63ef7c5b0",
+      "tree": "5b758251ecd5fa18b78e38afba4c1ccd3e5fb254"
+    }
+  ]
+}
