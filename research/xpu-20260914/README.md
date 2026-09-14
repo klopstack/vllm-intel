@@ -74,18 +74,24 @@ The exact tested source archives distinguish measured code from later formatting
 
 ## Findings and remaining experiments
 
-1. Restrict the custom collective to sizes where it wins. Graph microbenchmarks
+1. Test the existing `use_local_argmax_reduction=True` option with native heads.
+   The baseline left it off. For greedy non-tree drafting, the proposer can use
+   each shard's local maximum and gather only value/index pairs instead of full
+   vocabulary logits. The local Qwen3.5 MTP model implements the required mixin.
+   This retains FP16 heads and the full vocabulary; its TP2 speed and output
+   behavior still need benchmarking.
+2. Restrict the custom collective to sizes where it wins. Graph microbenchmarks
    favored it through 15360 elements and favored oneCCL from 20480 upward.
    A size-based policy still needs matched model benchmarks.
-2. Make attention work scale safely with the live context under graph replay.
+3. Make attention work scale safely with the live context under graph replay.
    The isolated short-context M7 kernel improved 36.4% with an actual-length
    bound, and the 8K case improved 4.1%. A static smaller capture bound is unsafe
    as context grows; no such product change was integrated.
-3. Optimize the existing FP16 output projections and existing target GPTQ GEMMs.
+4. Optimize the existing FP16 output projections and existing target GPTQ GEMMs.
    They dominated recorded device durations. The alternative layouts and Triton
    kernels tested so far were flat or slower. This leaves substantial work to
    investigate, without claiming an available speedup.
-4. Sweep MTP depth on TP2 with unchanged heads, measuring accepted tokens per
+5. Sweep MTP depth on TP2 with unchanged heads, measuring accepted tokens per
    second across the fixed contexts and a broader task corpus.
 
 Native M7-to-M8 padding gave a roughly 3% isolated down-projection improvement
