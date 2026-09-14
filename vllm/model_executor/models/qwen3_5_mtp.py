@@ -2,6 +2,7 @@
 # SPDX-FileCopyrightText: Copyright contributors to the vLLM project
 """Inference-only Qwen3_5 MTP model."""
 
+import os
 from collections.abc import Iterable
 
 import torch
@@ -305,6 +306,14 @@ class Qwen3_5MTP(LocalArgmaxMixin, nn.Module, SupportsMultiModal, SupportsPP):
         hidden_states: torch.Tensor,
         spec_step_idx: int = 0,
     ) -> torch.Tensor | None:
+        if os.environ.get("B70_DRAFT_LMHEAD_INT4") == "1":
+            from vllm.model_executor.models.b70_draft_lmhead_int4 import (
+                build_draft_lmhead_int4,
+                draft_lmhead_int4_logits,
+            )
+
+            build_draft_lmhead_int4(self)
+            return draft_lmhead_int4_logits(self, hidden_states)
         return self.logits_processor(self.lm_head, hidden_states)
 
     def load_weights(self, weights: Iterable[tuple[str, torch.Tensor]]) -> set[str]:
