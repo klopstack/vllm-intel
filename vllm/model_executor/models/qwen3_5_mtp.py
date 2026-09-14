@@ -2,6 +2,7 @@
 # SPDX-FileCopyrightText: Copyright contributors to the vLLM project
 """Inference-only Qwen3_5 MTP model."""
 
+import os
 from collections.abc import Iterable
 
 import torch
@@ -305,6 +306,18 @@ class Qwen3_5MTP(LocalArgmaxMixin, nn.Module, SupportsMultiModal, SupportsPP):
         hidden_states: torch.Tensor,
         spec_step_idx: int = 0,
     ) -> torch.Tensor | None:
+        if os.environ.get("B70_DRAFT_LMHEAD_INT4") == "1" and not getattr(
+            self, "_b70_lmhead_int4_tp_blocked", False
+        ):
+            from vllm.model_executor.models.b70_draft_lmhead_int4 import (
+                build_draft_lmhead_int4,
+                draft_lmhead_int4_logits,
+            )
+
+            if getattr(self, "_b70_lmhead_int4", None) is None:
+                build_draft_lmhead_int4(self)
+            if getattr(self, "_b70_lmhead_int4", None) is not None:
+                return draft_lmhead_int4_logits(self, hidden_states)
         return self.logits_processor(self.lm_head, hidden_states)
 
     def load_weights(self, weights: Iterable[tuple[str, torch.Tensor]]) -> set[str]:
@@ -320,7 +333,14 @@ class Qwen3_5MTP(LocalArgmaxMixin, nn.Module, SupportsMultiModal, SupportsPP):
                 yield name, weight
 
         loader = AutoWeightsLoader(self)
-        return loader.load_weights(remap_weight_names(weights))
+        result = loader.load_weights(remap_weight_names(weights))
+        if os.environ.get("B70_DRAFT_MTP_INT4") == "1":
+            from vllm.model_executor.models.b70_draft_mtp_int4 import (
+                build_draft_mtp_int4,
+            )
+
+            build_draft_mtp_int4(self)
+        return result
 
 
 class Qwen3_5MoeMTP(Qwen3_5MTP, QwenNextMixtureOfExperts):
