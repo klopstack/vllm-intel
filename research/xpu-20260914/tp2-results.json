@@ -1,0 +1,502 @@
+{
+  "runs": {
+    "oneCCL_1": {
+      "512": {
+        "decode_median": 114.27333872889591,
+        "decode_min": 110.15386219861306,
+        "decode_max": 148.69768100426444,
+        "decode_per_prompt": [
+          114.27333872889591,
+          118.87071462432034,
+          148.69768100426444,
+          110.15386219861306,
+          114.2682308606539
+        ],
+        "prefill_median": 1975.7844844318106,
+        "proposed": 744,
+        "accepted": 518,
+        "drafts": 124,
+        "acceptance_fraction": 0.696236559139785,
+        "acceptance_length": 5.17741935483871,
+        "per_depth": [
+          0.9193548387096774,
+          0.7983870967741935,
+          0.7258064516129032,
+          0.6370967741935484,
+          0.5806451612903226,
+          0.5161290322580645
+        ]
+      },
+      "8192": {
+        "decode_median": 86.57071318624816,
+        "decode_min": 80.39146423057878,
+        "decode_max": 93.74101561311397,
+        "decode_per_prompt": [
+          86.57071318624816,
+          80.39146423057878,
+          93.74101561311397,
+          91.40561520353155,
+          84.73179203756227
+        ],
+        "prefill_median": 2190.6929162969277,
+        "proposed": 3558,
+        "accepted": 1773,
+        "drafts": 593,
+        "acceptance_fraction": 0.49831365935919053,
+        "acceptance_length": 3.9898819561551435,
+        "per_depth": [
+          0.806070826306914,
+          0.627318718381113,
+          0.5092748735244519,
+          0.41989881956155145,
+          0.342327150084317,
+          0.28499156829679595
+        ]
+      },
+      "32768": {
+        "decode_median": 80.92575208609608,
+        "decode_min": 75.21340371547225,
+        "decode_max": 89.55568106893858,
+        "decode_per_prompt": [
+          89.55568106893858,
+          75.21340371547225,
+          79.26742827326204,
+          88.82657017653064,
+          80.92575208609608
+        ],
+        "prefill_median": 1948.334933040585,
+        "proposed": 3462,
+        "accepted": 1794,
+        "drafts": 577,
+        "acceptance_fraction": 0.5181975736568457,
+        "acceptance_length": 4.109185441941074,
+        "per_depth": [
+          0.8405545927209706,
+          0.6741767764298093,
+          0.5216637781629117,
+          0.42287694974003465,
+          0.35528596187175043,
+          0.29462738301559793
+        ]
+      }
+    },
+    "custom_1": {
+      "512": {
+        "decode_median": 112.38673188411454,
+        "decode_min": 104.60325837833894,
+        "decode_max": 139.3548357417474,
+        "decode_per_prompt": [
+          116.23014998113877,
+          108.15394098069866,
+          139.3548357417474,
+          104.60325837833894,
+          112.38673188411454
+        ],
+        "prefill_median": 1972.2780223990408,
+        "proposed": 762,
+        "accepted": 520,
+        "drafts": 127,
+        "acceptance_fraction": 0.6824146981627297,
+        "acceptance_length": 5.094488188976378,
+        "per_depth": [
+          0.8976377952755905,
+          0.7952755905511811,
+          0.7165354330708661,
+          0.6377952755905512,
+          0.5669291338582677,
+          0.48031496062992124
+        ]
+      },
+      "8192": {
+        "decode_median": 84.05307529342147,
+        "decode_min": 81.59623469091726,
+        "decode_max": 91.71072803666341,
+        "decode_per_prompt": [
+          84.05307529342147,
+          83.1941912446667,
+          91.71072803666341,
+          90.97803652785866,
+          81.59623469091726
+        ],
+        "prefill_median": 2189.1216810067704,
+        "proposed": 3516,
+        "accepted": 1760,
+        "drafts": 586,
+        "acceptance_fraction": 0.5005688282138794,
+        "acceptance_length": 4.003412969283277,
+        "per_depth": [
+          0.8225255972696246,
+          0.6518771331058021,
+          0.5170648464163823,
+          0.4197952218430034,
+          0.32593856655290104,
+          0.26621160409556316
+        ]
+      },
+      "32768": {
+        "decode_median": 79.91460173417306,
+        "decode_min": 70.10562944840733,
+        "decode_max": 89.20727820300434,
+        "decode_per_prompt": [
+          86.24906448130257,
+          70.10562944840733,
+          79.5087331943077,
+          89.20727820300434,
+          79.91460173417306
+        ],
+        "prefill_median": 1947.5498835160624,
+        "proposed": 3414,
+        "accepted": 1763,
+        "drafts": 569,
+        "acceptance_fraction": 0.5164030462800234,
+        "acceptance_length": 4.098418277680141,
+        "per_depth": [
+          0.8347978910369068,
+          0.6608084358523726,
+          0.5166959578207382,
+          0.4253075571177504,
+          0.37258347978910367,
+          0.28822495606326887
+        ]
+      }
+    },
+    "oneCCL_2": {
+      "512": {
+        "decode_median": 114.24119727929912,
+        "decode_min": 106.05793549024955,
+        "decode_max": 141.24914212285347,
+        "decode_per_prompt": [
+          118.7547316764619,
+          109.88342988663318,
+          141.24914212285347,
+          106.05793549024955,
+          114.24119727929912
+        ],
+        "prefill_median": 1975.0765552173987,
+        "proposed": 762,
+        "accepted": 523,
+        "drafts": 127,
+        "acceptance_fraction": 0.6863517060367454,
+        "acceptance_length": 5.118110236220472,
+        "per_depth": [
+          0.9133858267716536,
+          0.7795275590551181,
+          0.7244094488188977,
+          0.6299212598425197,
+          0.5669291338582677,
+          0.5039370078740157
+        ]
+      },
+      "8192": {
+        "decode_median": 86.45954341135993,
+        "decode_min": 77.5370937876792,
+        "decode_max": 92.92702273232369,
+        "decode_per_prompt": [
+          86.45954341135993,
+          82.05124529335625,
+          92.92702273232369,
+          89.92926380765032,
+          77.5370937876792
+        ],
+        "prefill_median": 2192.440130708884,
+        "proposed": 3948,
+        "accepted": 1906,
+        "drafts": 658,
+        "acceptance_fraction": 0.4827760891590679,
+        "acceptance_length": 3.896656534954407,
+        "per_depth": [
+          0.8069908814589666,
+          0.621580547112462,
+          0.49544072948328266,
+          0.39969604863221886,
+          0.31458966565349544,
+          0.25835866261398177
+        ]
+      },
+      "32768": {
+        "decode_median": 83.7285398113332,
+        "decode_min": 70.23021760929991,
+        "decode_max": 88.82540318895852,
+        "decode_per_prompt": [
+          87.99567517876979,
+          70.23021760929991,
+          83.7285398113332,
+          88.82540318895852,
+          72.30115505639493
+        ],
+        "prefill_median": 1948.2697995079038,
+        "proposed": 3600,
+        "accepted": 1812,
+        "drafts": 600,
+        "acceptance_fraction": 0.5033333333333333,
+        "acceptance_length": 4.02,
+        "per_depth": [
+          0.8216666666666667,
+          0.6633333333333333,
+          0.5,
+          0.4166666666666667,
+          0.35,
+          0.2683333333333333
+        ]
+      }
+    },
+    "custom_INT4_draft_40K": {
+      "512": {
+        "decode_median": 133.81623446618727,
+        "decode_max": 167.64904319798902,
+        "decode_min": 125.8200273194032,
+        "decode_per_prompt": [
+          133.77952576499348,
+          133.81623446618727,
+          167.64904319798902,
+          125.8200273194032,
+          134.12943355437594
+        ],
+        "prefill_median": 2064.7561152553903,
+        "proposed": 876,
+        "accepted": 507,
+        "drafts": 146,
+        "acceptance_fraction": 0.5787671232876712,
+        "acceptance_length": 4.472602739726027,
+        "per_depth": [
+          0.8698630136986302,
+          0.7123287671232876,
+          0.6164383561643836,
+          0.5068493150684932,
+          0.4178082191780822,
+          0.3493150684931507
+        ]
+      },
+      "8192": {
+        "decode_median": 109.81901022247717,
+        "decode_max": 111.41201718875813,
+        "decode_min": 94.40857307473003,
+        "decode_per_prompt": [
+          109.81901022247717,
+          94.40857307473003,
+          111.40306946378276,
+          111.41201718875813,
+          108.85250065860404
+        ],
+        "prefill_median": 2207.0489558223617,
+        "proposed": 4194,
+        "accepted": 1871,
+        "drafts": 699,
+        "acceptance_fraction": 0.4461134954697186,
+        "acceptance_length": 3.676680972818312,
+        "per_depth": [
+          0.7954220314735336,
+          0.5937052932761088,
+          0.4721030042918455,
+          0.3490701001430615,
+          0.2646638054363376,
+          0.2017167381974249
+        ]
+      },
+      "32768": {
+        "decode_median": 95.02548637851596,
+        "decode_max": 147.77070532935738,
+        "decode_min": 87.069332531467,
+        "decode_per_prompt": [
+          108.17206367485466,
+          87.069332531467,
+          95.02548637851596,
+          147.77070532935738,
+          93.88926003221552
+        ],
+        "prefill_median": 1956.8294693646833,
+        "proposed": 3576,
+        "accepted": 1796,
+        "drafts": 596,
+        "acceptance_fraction": 0.5022371364653244,
+        "acceptance_length": 4.0134228187919465,
+        "per_depth": [
+          0.8221476510067114,
+          0.6526845637583892,
+          0.5067114093959731,
+          0.4110738255033557,
+          0.3422818791946309,
+          0.2785234899328859
+        ]
+      }
+    }
+  },
+  "comparisons": {
+    "oneCCL_1_vs_custom_1": {
+      "same_input_ids": true,
+      "smoke_equal": true,
+      "timed_output_difference_count": 8,
+      "differences": [
+        {
+          "section": "timed",
+          "label": "rag",
+          "context": 512,
+          "first_different_token": 20,
+          "lengths": [
+            128,
+            128
+          ]
+        },
+        {
+          "section": "timed",
+          "label": "tool",
+          "context": 512,
+          "first_different_token": 108,
+          "lengths": [
+            128,
+            128
+          ]
+        },
+        {
+          "section": "timed",
+          "label": "document",
+          "context": 512,
+          "first_different_token": 36,
+          "lengths": [
+            128,
+            128
+          ]
+        },
+        {
+          "section": "timed",
+          "label": "research",
+          "context": 8192,
+          "first_different_token": 230,
+          "lengths": [
+            512,
+            512
+          ]
+        },
+        {
+          "section": "timed",
+          "label": "rag",
+          "context": 8192,
+          "first_different_token": 197,
+          "lengths": [
+            512,
+            495
+          ]
+        },
+        {
+          "section": "timed",
+          "label": "rag",
+          "context": 32768,
+          "first_different_token": 140,
+          "lengths": [
+            512,
+            459
+          ]
+        },
+        {
+          "section": "timed",
+          "label": "tool",
+          "context": 32768,
+          "first_different_token": 108,
+          "lengths": [
+            512,
+            512
+          ]
+        },
+        {
+          "section": "timed",
+          "label": "document",
+          "context": 32768,
+          "first_different_token": 232,
+          "lengths": [
+            512,
+            512
+          ]
+        }
+      ]
+    },
+    "oneCCL_1_vs_oneCCL_2": {
+      "same_input_ids": true,
+      "smoke_equal": true,
+      "timed_output_difference_count": 7,
+      "differences": [
+        {
+          "section": "timed",
+          "label": "rag",
+          "context": 512,
+          "first_different_token": 20,
+          "lengths": [
+            128,
+            128
+          ]
+        },
+        {
+          "section": "timed",
+          "label": "research",
+          "context": 8192,
+          "first_different_token": 230,
+          "lengths": [
+            512,
+            512
+          ]
+        },
+        {
+          "section": "timed",
+          "label": "rag",
+          "context": 8192,
+          "first_different_token": 252,
+          "lengths": [
+            512,
+            512
+          ]
+        },
+        {
+          "section": "timed",
+          "label": "assistant",
+          "context": 8192,
+          "first_different_token": 141,
+          "lengths": [
+            309,
+            512
+          ]
+        },
+        {
+          "section": "timed",
+          "label": "rag",
+          "context": 32768,
+          "first_different_token": 140,
+          "lengths": [
+            512,
+            461
+          ]
+        },
+        {
+          "section": "timed",
+          "label": "tool",
+          "context": 32768,
+          "first_different_token": 7,
+          "lengths": [
+            512,
+            512
+          ]
+        },
+        {
+          "section": "timed",
+          "label": "assistant",
+          "context": 32768,
+          "first_different_token": 7,
+          "lengths": [
+            318,
+            406
+          ]
+        }
+      ]
+    }
+  },
+  "limits": [
+    "Five different measured prompts per context, not five repetitions of one prompt.",
+    "Exact timed-output equality is assessed separately from the four correctness smoke prompts."
+  ],
+  "quant_validation": {
+    "smoke_outputs_exact_vs_standard": true,
+    "timed_inputs_exact": true,
+    "timed_outputs_differ_vs_custom": 7,
+    "target_output_tokens_outside_draft_cut": 202,
+    "all_source_hashes_match": true,
+    "cleanup_verified": true
+  }
+}
