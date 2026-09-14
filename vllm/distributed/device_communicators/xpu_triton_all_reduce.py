@@ -34,7 +34,7 @@ import torch.distributed as dist
 from vllm.triton_utils import tl, triton
 
 BLOCK = 1024
-MAX_NUMEL = 262144  # 512KB bf16 — decode shapes only; larger falls back
+MAX_NUMEL = 262144  # 512KB 16-bit — decode shapes only; larger falls back
 MAX_BLOCKS = (MAX_NUMEL + BLOCK - 1) // BLOCK
 
 
@@ -93,6 +93,14 @@ class OneShotAllReduce:
         flag_hdl = symm.rendezvous(self._flags, group=gname)
         peer = 1 - self.rank
         self._peer_slot = slot_hdl.get_buffer(peer, self._slot.shape, self._slot.dtype)
+        self._slot_views = {
+            torch.bfloat16: self._slot,
+            torch.float16: self._slot.view(torch.float16),
+        }
+        self._peer_slot_views = {
+            torch.bfloat16: self._peer_slot,
+            torch.float16: self._peer_slot.view(torch.float16),
+        }
         self._peer_flags = flag_hdl.get_buffer(
             peer, self._flags.shape, self._flags.dtype
         )
@@ -112,7 +120,7 @@ class OneShotAllReduce:
 
     def should_custom_ar(self, t: torch.Tensor) -> bool:
         return (
-            t.dtype == torch.bfloat16
+            t.dtype in (torch.bfloat16, torch.float16)
             and t.is_contiguous()
             and 0 < t.numel() <= MAX_NUMEL
             and t.numel() % BLOCK == 0  # aligned regime only — see module doc
@@ -127,8 +135,8 @@ class OneShotAllReduce:
         _one_shot_push_kernel[grid](
             t,
             out,
-            self._slot,
-            self._peer_slot,
+            self._slot_views[t.dtype],
+            self._peer_slot_views[t.dtype],
             self._flags,
             self._peer_flags,
             self._fence,
