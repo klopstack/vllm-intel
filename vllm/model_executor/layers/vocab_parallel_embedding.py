@@ -136,7 +136,7 @@ class UnquantizedEmbeddingMethod(QuantizeMethodBase):
                 exc,
             )
             return
-        required_ops = ("int8_gemm_w8a8", "per_token_quant_int8_xpu")
+        required_ops = ("int8_gemm_w8a8",)
         if any(not hasattr(torch.ops._xpu_C, op) for op in required_ops):
             _logger.warning(
                 "VLLM_XPU_LM_HEAD_INT8 requested but required _xpu_C ops are "
@@ -397,8 +397,11 @@ class UnquantizedEmbeddingMethod(QuantizeMethodBase):
             # FP16 vocab GEMM is read on every draft step and every verify;
             # INT8 halves the single biggest per-step weight read.
             x_contiguous = x if x.is_contiguous() else x.contiguous()
-            x_q, x_scale = torch.ops._xpu_C.per_token_quant_int8_xpu(
-                x_contiguous)
+            x_f = x_contiguous.reshape(-1, x_contiguous.shape[-1]).float()
+            x_scale = (x_f.abs().amax(dim=-1, keepdim=True)
+                       .clamp_min(1.0e-10) / 127.0)
+            x_q = torch.round(x_f / x_scale).clamp_(-127, 127).to(torch.int8)
+            x_scale = x_scale.squeeze(-1).contiguous()
             return torch.ops._xpu_C.int8_gemm_w8a8(
                 x_q,
                 x_scale,
