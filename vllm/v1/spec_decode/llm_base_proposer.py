@@ -59,6 +59,8 @@ from vllm.v1.spec_decode.utils import (
     _eagle_prepare_next_token_padded,
     _eagle_step_slot_mapping_metadata,
     compute_new_slot_mapping,
+    eagle_prepare_inputs_padded_kernel,
+    eagle_prepare_next_token_padded_kernel,
     eagle_step_update_slot_mapping_and_metadata,
     extend_all_queries_by_N,
     next_power_of_2,
